@@ -1,0 +1,57 @@
+% Mathematical Writing
+\DeclarePairedDelimiter{\abs}{\vert}{\vert}
+\DeclarePairedDelimiter{\norm}{\Vert}{\Vert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+\newcommand*{\inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand*{\positive}[1]{\ensuremath{\left[#1\right]^{+}}}
+
+\newcommand*{\diff}{\ensuremath{\mathrm{d}}}
+\newcommand*{\imag}{\ensuremath{\mathrm{j}}}
+\newcommand*{\e}{\ensuremath{\mathrm{e}}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%% change these to \mathbb, if you do not want to use the dsfont package
+\newcommand*{\reals}{\ensuremath{\mathds{R}}} 
+\newcommand*{\complexes}{\ensuremath{\mathds{C}}}
+\newcommand*{\naturals}{\ensuremath{\mathds{N}}}
+%%
+
+\newcommand*{\expect}[2][]{\ensuremath{\mathbb{E}_{#1}\left[#2\right]}}
+
+\newcommand*{\unif}{\ensuremath{\mathcal{U}}}
+\newcommand*{\normaldist}{\ensuremath{\mathcal{N}}}
+
+
+\newcommand{\mbx}[1]{\makebox[5cm]{#1\hfill}}
+\newcommand{\poly}[2]{#1_0+#1_1x+\cdots+#1_#2x^#2}
+\newcommand{\polyh}[2]{#1_0(y,z)+#1_1(y,z)x+\cdots+#1_#2(y,z)x^#2}
+
+\newcommand{\curveC}{\mathcal C}
+\newcommand{\curveD}{\mathcal D}
+\newcommand{\resPQ}{\mathcal R_{P,Q}}
+\newcommand{\CNZ}{\CC^{n+1}-\{\vec{0}\}}
+\newcommand{\projective}{\mathbb P}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\ord}{ord}
+
+\newcommand{\CC}{\mathbb C}
+
+\newcommand{\vocab}[1]{\textbf{\color{blue}\sffamily #1}}
+
+% THEOREMS
+\theoremstyle{plain}% default
+% \newtheorem{theorem}{Theorem}%[section]
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{proposition}{Proposition}
+% \newtheorem{corollary}{Corollary}
+\newtheorem{factx}[theorem]{Fact}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{remark}[theorem]{Remark}
+% \newtheorem{example}{Example}
+
+\setbeamertemplate{theorems}[numbered]

@@ -1,4 +1,3 @@
-# LaTeX Templates
+# Mathematics Projects/Papers/Presentations and LaTeX Templates
 
-LaTeX templates and projects that I created or found.
 

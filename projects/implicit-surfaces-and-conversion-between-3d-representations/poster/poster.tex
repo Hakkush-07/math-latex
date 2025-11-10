@@ -1,0 +1,327 @@
+% Gemini theme
+% https://github.com/anishathalye/gemini
+
+\documentclass[16pt]{beamer}
+
+% ====================
+% Packages
+% ====================
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[size=custom,width=120,height=72,scale=1.0]{beamerposter}
+\usetheme{gemini}
+\usecolortheme{hakan}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.14}
+\usepackage{anyfontsize}
+
+\usepackage{makecell}
+\usepackage[export]{adjustbox}
+\usepackage{algcompatible}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{multirow}
+
+\tikzstyle{block} = [rectangle, draw, text width=3em, text centered, rounded corners, minimum height=2em]
+\tikzstyle{line} = [draw, -latex]
+
+% ====================
+% Lengths
+% ====================
+
+% If you have N columns, choose \sepwidth and \colwidth such that
+% (N+1)*\sepwidth + N*\colwidth = \paperwidth
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.01\paperwidth}
+\setlength{\colwidth}{0.23\paperwidth}
+
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+\DeclareMathOperator{\mean}{mean}
+
+% ====================
+% Title
+% ====================
+
+\title{Implicit Surfaces and Conversion between 3D Object Representations}
+
+\author{Hakan Karakuş \and Prof. Lale Akarun}
+
+\institute[shortinst]{Department of Computer Engineering at Boğaziçi University}
+
+% ====================
+% Footer (optional)
+% ====================
+
+% \footercontent{
+%   \href{https://www.example.com}{https://www.example.com} \hfill
+%   ABC Conference 2025, New York --- XYZ-1234 \hfill
+%   \href{mailto:alyssa.p.hacker@example.com}{alyssa.p.hacker@example.com}}
+% (can be left out to remove footer)
+
+% ====================
+% Logo (optional)
+% ====================
+
+% use this to include logos on the left and/or right side of the header:
+\logoright{\includegraphics[height=7cm]{boun.png}}
+\logoleft{\includegraphics[height=7cm]{boun.png}}
+
+% ====================
+% Body
+% ====================
+
+\begin{document}
+
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{alertblock}{Project Definition}
+    The goals of this project include the following:
+    \begin{itemize}
+      \item to understand different 3D data structures
+      \item to use the implicit surface representation for better conversions
+      \item to use evaluation metrics for conversion methods
+    \end{itemize}
+  \end{alertblock}
+
+  \begin{block}{3D Object Representations}
+
+    There are 4 main 3D object representations: \textbf{Point Cloud}, \textbf{Triangle Mesh}, \textbf{Voxels}, \textbf{Implicit Surfaces}. Their advantages and disadvantages with an example image are in Table \ref{tab:repr}.
+
+    \begin{table}
+      \centering
+      \begin{tabular}{c c c c}
+        \toprule
+        \textbf{Representation} & \textbf{Example} & \textbf{Advantages} & \textbf{Disadvantages} \\
+        \midrule
+        Point Cloud & \includegraphics[width=0.28\textwidth,valign=c]{images/bunny-pcd.png}
+        & \makecell{standard \\ lidar \\ output} & \makecell{can not be \\ rendered \\ directly} \\
+        \midrule
+        Triangle Mesh & \includegraphics[width=0.28\textwidth,valign=c]{images/bunny-mesh.png} & \makecell{standard for \\ rendering} & \makecell{difficult to \\ accurately \\ sample \\ points} \\
+        \midrule
+        Voxels & \includegraphics[width=0.24\textwidth,valign=c]{images/bunny-voxels.png} & \makecell{standard for \\ medical, \\ similar to \\ pixels} & \makecell{huge data, \\ blocky} \\
+        \midrule
+        Implicit Surface & \includegraphics[width=0.24\textwidth,valign=c]{images/bunny-implicit.jpeg} & \makecell{continuous \\ smooth \\ appearance, \\ ideal for \\ conversion} & \makecell{not good for \\ sharp \\ features} \\
+        \bottomrule
+      \end{tabular}
+      \caption{3D object representations and their advantages-disadvantages.}
+      \label{tab:repr}
+    \end{table}
+
+  \end{block}
+
+  \begin{block}{Conversions}
+
+    In some cases, we need to convert one representation to another. Conversion from triangle meshes to point clouds can be done by uniform or poisson sampling. For the other direction, converting from point clouds to triangle meshes, there are algorithms such as ball pivoting, poisson, and alpha shape.
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}
+
+    Outputs of converting Point Cloud, Triangle Mesh, and Voxel to each other using Open3D library functions are given in Figure \ref{fig:conversion}
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.25\textwidth]{images/mesh2pcd2.png}
+      \includegraphics[width=0.25\textwidth]{images/pcd2mesh.png}
+      \includegraphics[width=0.25\textwidth]{images/mesh2voxels.png}
+      \caption{mesh to pcd, pcd to mesh, mesh to voxels}
+      \label{fig:conversion}
+    \end{figure}
+
+  \end{block}
+
+  \begin{block}{Triangulation of Implicit Surfaces}
+
+    In this project, I have implemented the algorithm for triangulating an implicit surface named "triangulation algorithm with marching method" \cite{implicit-algorithm}.
+
+    \begin{alertblock}
+
+      \begin{algorithmic}
+        \STATE $P_0\gets$ a surface point
+        \STATE $P_1,P_2,P_3,P_4,P_5,P_6\gets$ a hexagon surrounding $P_0$
+        \STATE $\Pi\gets[P_1,P_2,P_3,P_4,P_5,P_6]$, the first polygon
+        \STATE $PL\gets[\Pi_0]$, polygons
+        \WHILE {$|PL|>0$}
+          \STATE $\Pi\gets PL[0]$
+          \STATE $PL\gets PL-[\Pi]$
+          \STATE calculateAnglesToBeTriangulated($\Pi$)
+          \WHILE {$|\Pi|>3$}
+            \IF {$A\in\Pi$ is near $B\in\Pi$}
+              \STATE $\Pi_1,\Pi_2\gets$ divide $\Pi$ into two by merging $A$, $B$
+              \STATE $\Pi\gets\Pi_1$
+              \STATE $PL\gets PL+[\Pi_2]$
+            \ENDIF
+            \IF {$A\in\Pi$ is near $B\in\Pi'\neq \Pi$}
+              \STATE $\Pi_{\text{new}}\gets$ merge $\Pi$ and $\Pi'$ from $A$, $B$
+              \STATE $\Pi\gets\Pi_{\text{new}}$
+              \STATE $PL\gets PL-[\Pi']$
+            \ENDIF
+            \STATE $P_\text{min}\gets$ point with minimum angle to be triangulated
+            \STATE new points $\gets$ surround $P_\text{min}$ with triangles
+            \STATE $\Pi\gets \Pi-[P]+$ new points
+          \ENDWHILE
+        \ENDWHILE
+    
+        \end{algorithmic}
+
+    \end{alertblock}
+    
+    A starting point is selected. This starting point and any selected point throughout the algorithm are taken to the surface by applying a procedure similar to Newton's root finding method. At each step, the triangulation is extended by first choosing a pivot point with the minimum angle left to be triangulated, and then selecting new points on the tangent plane to the surface at that point, as shown in Figure \ref{fig:algo}.
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.80\textwidth]{images/triangulation-side.png}
+      \caption{Step of the triangulation algorithm.}
+      \label{fig:algo}
+    \end{figure}
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}
+
+    Towards the end of the procedure, triangulation needs to be merged at some points. To prevent overlaps at these points, some checks are conducted. If there are points that are close to each other by less than a typical triangle side, then the algorithm splits into branches. Also, if some branches are close to each other, then they are merged. When there is only one branch and this branch consists only of three points, the algorithm terminates with this last triangle being added.
+
+    Outputs of this algorithm for an ellipsoid, a torus, and a more complex shape are in Figure \ref{fig:triangulation}.
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.28\textwidth]{images/triangle-ellipsoid.png}
+      \includegraphics[width=0.28\textwidth]{images/triangle-torus.png}
+      \includegraphics[width=0.28\textwidth]{images/triangle-complex.png}
+      \caption{Triangulation of an ellipsoid, a torus, and a more complex shape.}
+      \label{fig:triangulation}
+    \end{figure}
+
+  \end{block}
+
+  \begin{block}{Voxelization of Implicit Surfaces}
+
+    The algorithm for voxelization is simple. For the given voxel size, some number of points are uniformly taken inside each voxel. A voxel is selected if the number of points taken inside the voxel that lie inside the surface is greater than the number of those that are outside.
+
+    Outputs of this algorithm for an ellipsoid, a torus, and a more complex shape are in Figure \ref{fig:voxelization}.
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.28\textwidth]{images/voxel-ellipsoid.png}
+      \includegraphics[width=0.28\textwidth]{images/voxel-torus.png}
+      \includegraphics[width=0.28\textwidth]{images/voxel-complex.png}
+      \caption{Voxelization of an ellipsoid, a torus, and a more complex shape.}
+      \label{fig:voxelization}
+    \end{figure}
+
+  \end{block}
+
+  \begin{block}{Sampling Points on Implicit Surfaces}
+
+    To create a point cloud from an implicit surfaces, some points can be sampled. First, the triangulation is applied. Then, on each triangle, some number of points are taken uniformly. These points are taken to the vicinity of the surface by the method described in the triangulation algorithm.
+
+  \end{block}
+
+  \begin{block}
+
+    \begin{figure}
+      \centering
+      \begin{tikzpicture}[node distance = 1cm and 5cm, auto]
+        \node[block](c){IS};
+        \node[block](f)[above =of c]{IS};
+        \node[block](a)[right =of c]{Mesh};
+        \node[block](b)[right =of f]{Voxel};
+        \node[block](d)[right= of a]{PCD2};
+        \node[block](e)[right= of b]{PCD1};
+        \path [line] (a) -- node [text width=4.0cm,midway,above] {sampling} (d);
+        \path [line] (b) -- node [text width=4.0cm,midway,above] {marching cubes} (e);
+        \path [line] (c) -- node [text width=4.0cm,midway,above] {triangulation} (a);
+        \path [line] (f) -- node [text width=4.0cm,midway,above] {voxelization} (b);
+      \end{tikzpicture}
+      \caption{Two different methods of converting an implicit surface to a point cloud.}
+      \label{fig:diagram}
+    \end{figure}
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}
+
+    Outputs of this algorithm for an ellipsoid, a torus, and a more complex shape are in Figure \ref{fig:sampling}.
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.28\textwidth]{images/pcd-ellipsoid.png}
+      \includegraphics[width=0.28\textwidth]{images/pcd-torus.png}
+      \includegraphics[width=0.28\textwidth]{images/pcd-complex.png}
+      \caption{Sampling points on an ellipsoid, a torus, and a more complex shape.}
+      \label{fig:sampling}
+    \end{figure}
+  
+  \end{block}
+
+  \begin{block}{Evaluation Metrics}
+
+    There are different metrics for comparing point clouds or triangle meshes such as Hausdorff, Chamfer, and F-score. \textbf{Hausdorff} and \textbf{Chamfer} metrics are derived from the distances between two point clouds/triangle meshes and their formulas are given below.
+
+    $$d_{\mathrm{H}}(X,Y):=\max\left\{\sup_{x\in X}d(x,Y),\sup_{y\in Y}d(X,y)\right\}$$
+
+    $$d_{\mathrm{C}}(X,Y):=\frac{1}{2}\left(\underset{x\in X}{\mean}\,d(x,Y)+\underset{y\in Y}{\mean}\,d(X,y)\right)$$
+
+    Two different methods of creating a point cloud from an implicit surface are given in Figure \ref{fig:diagram}. Using well known marching cubes method and the library functionality of Open3D that samples point on meshes, a point cloud (PCD1) can be created. However, I have a point cloud (PCD2) as a result of the triangulation algorithm and sampling, and with the same number of point sampled, it shows better results in comparison to the high resolution ground truth. The results of this comparison are given in Table \ref{tab:metric}.
+
+    \begin{table}
+      \centering
+      \begin{tabular}{l cc cc}
+        \toprule
+         & \multicolumn{2}{c}{Hausdorff} & \multicolumn{2}{c}{Chamfer} \\
+        \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+        Shape       & PCD1  & PCD2 (ours) & PCD1  & PCD2 (ours) \\
+        \midrule
+        Ellipsoid   & 0.046 & 0.044       & 0.037 & 0.028 \\
+        Torus       & 0.056 & 0.054       & 0.045 & 0.039 \\
+        Complex     & 0.083 & 0.067       & 0.071 & 0.059 \\
+        \bottomrule
+        \end{tabular}
+      \caption{Comparison of PCD1 with PCD2 (ours): Triangulation with the method developed yields lower error when compared to ground truth.}
+      \label{tab:metric}
+    \end{table}
+
+  \end{block}
+
+  \begin{block}{References}
+
+    \nocite{*}
+    \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+
+\end{document}

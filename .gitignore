@@ -4,5 +4,12 @@
 *.out
 *.toc
 *.pre
+*.nav
+*.snm
+*.bbl
+*.blg
+*.bib
+*.fls
+*.fdb_latexmk
 */auxs
 .DS_Store
