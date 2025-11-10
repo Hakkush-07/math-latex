@@ -1,0 +1,862 @@
+\documentclass[
+	american,
+	sections numbered,
+	usenames,
+	xcolor=dvipsnames,
+	aspectratio=1610,
+	%hyperref={pdfpagemode=FullScreen},
+]{beamer}
+
+\mode<presentation>
+
+\usepackage[T1]{fontenc}
+\usepackage{FiraMono}
+
+\usetheme[progressbar=frametitle]{metropolis}
+
+\usepackage{ifthen}
+
+%%% GRAPHICS %%%
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepgfplotslibrary{polar}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+%%% MATH & SCIENCE %%%
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{siunitx}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{mathtools}
+
+%%% FLOATS %%%
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+%\usepackage{biblatex}
+%\bibliography{literature.bib}
+
+
+% DESIGN COLORS
+\definecolor{accent}{HTML}{7EBDC2} % accent color
+\definecolor{bgcolor}{HTML}{FCFCFF} % background color
+\definecolor{bgcolorAlt}{HTML}{DCE1FC} % alternative background color
+\definecolor{fgcolor}{HTML}{222244} % foreground/text color
+
+%
+\setbeamercolor{normal text}{%
+	fg=fgcolor,
+	bg=bgcolor,
+}
+\setbeamercolor{alerted text}{%
+	fg=accent,
+}
+\setbeamercolor{palette primary}{%
+	use=normal text,
+	fg=normal text.fg,
+	bg=bgcolorAlt,%normal text.bg
+}
+
+\setbeamercolor{block title}{
+	bg=bgcolorAlt,
+}
+\setbeamercolor{block body}{
+	bg=bgcolorAlt,
+}
+\setbeamercolor{block title alerted}{%
+	use={palette primary, alerted text},
+	fg=palette primary.bg,
+	bg=alerted text.fg
+}
+\setbeamercolor{block title example}{%
+	use={block title, alerted text},
+	bg=block title.bg,
+	fg=alerted text.fg
+}
+%
+
+\pgfplotsset{legend style={fill=bgcolor,draw=fgcolor}}
+
+% PLOT COLORS
+%% Paul Tol High Contrast
+\definecolor{plot0}{HTML}{004488}
+\definecolor{plot1}{HTML}{DDAA33}
+\definecolor{plot2}{HTML}{BB5566}
+\definecolor{plot3}{HTML}{000000}
+\definecolor{plot4}{HTML}{AAAAAA}
+
+%% Paul Tol Vibrant
+%\definecolor{plot0}{HTML}{EE7733}
+%\definecolor{plot1}{HTML}{0077BB}
+%\definecolor{plot2}{HTML}{33BBEE}
+%\definecolor{plot3}{HTML}{EE3377}
+%\definecolor{plot4}{HTML}{CC3311}
+%\definecolor{plot5}{HTML}{009988}
+%\definecolor{plot6}{HTML}{BBBBBB}
+
+\pgfplotscreateplotcyclelist{lineplot cycle}{ %
+	{plot0, mark=*, thick, mark options=solid},
+	{plot1, mark=triangle*, thick, mark options=solid},
+	{plot2, mark=square*, thick, mark options=solid},
+	{plot3, mark=diamond*, thick, mark options=solid},
+	{plot4, mark=pentagon*, thick, mark options=solid},
+}
+
+% \AtBeginEnvironment{thm}{%
+%   % \setbeamercolor{block title}{use=example text,fg=white,bg=example text.fg!75!black}
+%   \setbeamercolor{block body}{parent=normal text,use=block title example,bg=blue!75!black!10!}
+% }
+
+
+%\renewcommand*{\bibfont}{\scriptsize}
+\setbeamerfont{block body reference}{size=\scriptsize}
+\setbeamerfont{block title reference}{size=\scriptsize}
+
+\setbeamerfont{description item}{series=\mdseries}
+\setbeamerfont{alerted text}{series=\bfseries\boldmath}
+
+
+\setbeamertemplate{title page}{
+\begin{minipage}[b][\textheight]{\textwidth}
+	\ifx\inserttitlegraphic\@empty\else\usebeamertemplate*{title graphic}\fi
+	\vfill%
+	\ifx\inserttitle\@empty\else\usebeamertemplate*{title}\fi
+	\ifx\insertsubtitle\@empty\else\usebeamertemplate*{subtitle}\fi
+	\usebeamertemplate*{title separator}
+
+	\ifx\beamer@shortauthor\@empty\else\usebeamertemplate*{author}\fi
+	\ifx\insertdate\@empty\else\usebeamertemplate*{date}\fi
+	\ifx\insertinstitute\@empty\else\usebeamertemplate*{institute}\fi
+	\vfil
+	\vspace*{1mm}
+\end{minipage}
+}
+\newcommand*{\seprule}{{\par\color{bgcolorAlt!90!fgcolor}\hrulefill\par\vspace*{1ex plus 0pt minus .5ex}}}
+
+
+% Mathematical Writing
+\DeclarePairedDelimiter{\abs}{\vert}{\vert}
+\DeclarePairedDelimiter{\norm}{\Vert}{\Vert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+\newcommand*{\inv}[1]{\ensuremath{#1^{-1}}}
+\newcommand*{\positive}[1]{\ensuremath{\left[#1\right]^{+}}}
+
+\newcommand*{\diff}{\ensuremath{\mathrm{d}}}
+\newcommand*{\imag}{\ensuremath{\mathrm{j}}}
+\newcommand*{\e}{\ensuremath{\mathrm{e}}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%% change these to \mathbb, if you do not want to use the dsfont package
+\newcommand*{\reals}{\ensuremath{\mathds{R}}} 
+\newcommand*{\complexes}{\ensuremath{\mathds{C}}}
+\newcommand*{\naturals}{\ensuremath{\mathds{N}}}
+%%
+
+\newcommand*{\expect}[2][]{\ensuremath{\mathbb{E}_{#1}\left[#2\right]}}
+
+\newcommand*{\unif}{\ensuremath{\mathcal{U}}}
+\newcommand*{\normaldist}{\ensuremath{\mathcal{N}}}
+
+
+\newcommand{\mbx}[1]{\makebox[5cm]{#1\hfill}}
+\newcommand{\poly}[2]{#1_0+#1_1x+\cdots+#1_#2x^#2}
+\newcommand{\polyh}[2]{#1_0(y,z)+#1_1(y,z)x+\cdots+#1_#2(y,z)x^#2}
+
+\newcommand{\curveC}{\mathcal C}
+\newcommand{\curveD}{\mathcal D}
+\newcommand{\resPQ}{\mathcal R_{P,Q}}
+\newcommand{\CNZ}{\CC^{n+1}-\{\vec{0}\}}
+\newcommand{\projective}{\mathbb P}
+\DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\ord}{ord}
+
+\newcommand{\CC}{\mathbb C}
+
+\newcommand{\vocab}[1]{\textbf{\color{blue}\sffamily #1}}
+
+\newcommand{\hgline}[2]{
+\pgfmathsetmacro{\thetaone}{#1}
+\pgfmathsetmacro{\thetatwo}{#2}
+\pgfmathsetmacro{\theta}{(\thetaone+\thetatwo)/2}
+\pgfmathsetmacro{\phi}{abs(\thetaone-\thetatwo)/2}
+\pgfmathsetmacro{\close}{less(abs(\phi-90),0.0001)}
+\ifdim \close pt = 1pt
+    \draw[blue] (\theta+180:1) -- (\theta:1);
+\else
+    \pgfmathsetmacro{\R}{tan(\phi)}
+    \pgfmathsetmacro{\distance}{sqrt(1+\R^2)}
+    \draw[blue] (\theta:\distance) circle (\R);
+\fi
+}
+
+\newcommand\anglex{10}
+
+\renewcommand{\H}{\mathbb{H}}
+\DeclareMathOperator{\PSL}{PSL}
+
+% THEOREMS
+\theoremstyle{plain}
+% \newtheorem{theorem}{Theorem}%[section]
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{proposition}{Proposition}
+% \newtheorem{corollary}{Corollary}
+\newtheorem{factx}[theorem]{Fact}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{remark}[theorem]{Remark}
+% \newtheorem{example}{Example}
+
+\setbeamertemplate{theorems}[numbered]
+
+\pgfplotsset{compat=newest}
+\pgfplotsset{%
+	betterplot/.style={
+		width=.93\linewidth,
+		height=.5\textheight,
+		xlabel near ticks,
+		ylabel near ticks,
+		cycle list name=lineplot cycle,
+		mark options=solid,
+		xmajorgrids=true,
+		xminorgrids=true,
+		ymajorgrids=true,
+		grid style={line width=.1pt, draw=gray!20},
+		major grid style={line width=.25pt,draw=gray!30},
+		legend cell align=left,
+		legend style = {
+			/tikz/every even column/.append style={column sep=0.33cm}
+		},
+	},
+}
+
+\title{Pairings and Applications in Cryptography}
+\author{Hakan Karakuş - Graduate Seminar}
+\date{5 November 2025}
+
+% \titlegraphic{\includegraphics[width=0.3\textheight]{figures/logo.png}}
+
+\begin{document}
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+\begin{frame}{Table of contents}
+	\setbeamertemplate{section in toc}[sections numbered]
+	\tableofcontents%[hideallsubsections]
+\end{frame}
+
+\section{Pairing}
+
+\subsection{Definition and Simple Examples}
+
+\begin{frame}{Pairing - Definition (for Cryptography)}
+
+    Let $G_1$ and $G_2$ be additive, and $G_T$ be multiplicative abelian groups. A \vocab{pairing} is a map $e:G_1\times G_2\rightarrow G_T$ such that
+
+    \begin{itemize}
+        \item (\textbf{bilinear}) for any $a,a_1,a_2\in G_1$, $b,b_1,b_2\in G_2$,
+		\begin{itemize}
+			\item $e(a_1+a_2,b)=e(a_1,b)e(a_2,b)$
+			\item $e(a,b_1+b_2)=e(a,b_1)e(a,b_2)$
+		\end{itemize}
+        \item (\textbf{non-degenerate})
+        \begin{itemize}
+			\item for any $a\neq{Id}_{G_1}$, there is at least one $b\in G_2$ such that $e(a,b)\neq {Id}_{G_T}$
+			\item for any $b\neq{Id}_{G_2}$, there is at least one $a\in G_1$ such that $e(a,b)\neq {Id}_{G_T}$
+		\end{itemize}
+		\item {\color{gray} efficiently computable}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Pairing - Simple Examples}
+
+	\begin{itemize}
+		\item Multiplication, $\bullet:\mathbb{R}\times\mathbb{R}\rightarrow\mathbb{R}$, $(x,y)\mapsto xy$
+		\item Scalar product, $\langle\cdot,\cdot\rangle:\mathbb{R}^n\times\mathbb{R}^n\rightarrow\mathbb{R}$
+		\item Determinant map, $\det:\mathbb{R}^2\times\mathbb{R}^2\rightarrow\mathbb{R}$, $([a, b]^T, [c, d]^T)\mapsto ad-bc$
+	\end{itemize}
+
+	These mappings can be composed with $\exp:\mathbb{R}^+\rightarrow\mathbb{R}^\times$ to get examples of pairings.
+
+\end{frame}
+
+\begin{frame}{Pairing - For Cyclic Groups}
+
+	For cyclic groups $G_1=\langle P\rangle$, $G_2=\langle Q\rangle$, the pairing definition gets simplified to:
+
+	\begin{itemize}
+		\item $e(aP,bQ)=e(P,Q)^{ab}$ (bilinearity)
+		\item $e(P,Q)\neq {Id}_{G_T}$ (non-degeneracy)
+		\item {\color{gray} efficiently computable}
+	\end{itemize}
+
+\end{frame}
+
+\subsection{Computational Perspective}
+
+\begin{frame}{A bit about the Computational Perspective}
+
+	Let $G=\langle g\rangle$ be a cyclic multiplicative group of prime order $p$. Let $0\leq x,y,z\leq p-1$ be integers.
+
+	\textbf{Exponentiation Problem:} Given {\color{red}$g$} and {\color{red}$x$}, compute {\color{blue}$g^x$}.
+	
+	\textbf{Discrete Log Problem:} Given {\color{red}$g$} and {\color{red}$g^x$}, compute {\color{blue}$x$}.
+
+	\textbf{Computational Diffie-Hellman Problem:} Given {\color{red}$g$}, {\color{red}$g^x$}, and {\color{red}$g^y$}, compute {\color{blue}$g^{xy}$}.
+
+	\textbf{Decisional Diffie-Hellman Problem:} Given {\color{red}$g$}, {\color{red}$g^x$}, {\color{red}$g^y$}, {\color{red}$g^z$}, determine if {\color{blue}$z\overset{?}{=}xy$} or not.
+
+\end{frame}
+
+\begin{frame}{Difficulty of Solving These Problems}
+
+	\vocab{hard:} there is no efficient method, try all possibilities by brute force
+
+	\vocab{easy:} there is an efficient method
+
+	\vocab{efficient:} the method terminates after a very small number of steps compared to the size of the input
+
+\end{frame}
+
+\begin{frame}{Exponentiation Problem}
+
+	\textbf{Exponentiation Problem} is \underline{easy}. We can just use square-and-multiply method. For example, to find $a^{23}$ when $a$ is given, we need 7 multiplication operations: 
+	$$a^2=a\times a$$
+	$$a^4=a^2\times a^2$$
+	$$a^5=a^4\times a$$
+	$$a^{10}=a^5\times a^5$$
+	$$a^{11}=a^{10}\times a$$
+	$$a^{22}=a^{11}\times a^{11}$$
+	$$a^{23}=a^{22}\times a$$
+
+\end{frame}
+
+\begin{frame}{Exponentiation Problem and Discrete Log Problem}
+
+	In general case, we can find $a^x$ in just $\lfloor\log_2x\rfloor$ squaring, and possibly another $\lfloor\log_2x\rfloor$ multiplication. And crucially
+	$$2\log_2x<<<x$$
+
+	For example, for a typical group used in cryptography of order around $2^{256}$, we could have inputs possibly greater than the number of atoms in the universe, but we can calculate the exponentiation in just around 500 steps.
+
+	However, in general, there has not been any efficient method for the inverse of this problem, namely \textbf{Discrete Log Problem}, we need to try every $0\leq x\leq p-1$. So, it is a \underline{hard} problem.
+
+\end{frame}
+
+\begin{frame}{Diffie-Hellman Problem}
+
+	\textbf{Computational Diffie-Hellman Problem:} Given {\color{red}$g$}, {\color{red}$g^x$}, and {\color{red}$g^y$}, compute {\color{blue}$g^{xy}$}.
+
+	\textbf{Decisional Diffie-Hellman Problem:} Given {\color{red}$g$}, {\color{red}$g^x$}, {\color{red}$g^y$}, {\color{red}$g^z$}, determine if {\color{blue}$z\overset{?}{=}xy$} or not.
+
+	\vspace{1cm}
+
+	\textbf{Computational Diffie-Hellman Problem} is similarly \underline{hard}. However, \textbf{Decisional Diffie-Hellman Problem} is \underline{easy} in groups of prime order where we can do pairings. Assume there is a symmetric pairing $e:G\times G\rightarrow G_T$. We just check the following equality.
+
+	$$e(g,g)^z=e(g,g^z)\overset{?}{=}e(g^x,g^y)=e(g,g)^{xy}$$
+
+\end{frame}
+
+\section{Elliptic Curves}
+
+\begin{frame}{Elliptic Curves}
+
+	An \vocab{elliptic curve} $E$ over a field $K$ is an equation of the form 
+	$$y^2=x^3+ax+b$$
+	such that $\text{char}\,K\not\in \{2,3\}$ (we need this so that we can convert them into this nice form) and $4a^3+27b^2\neq 0$ (we need this so that the curve is non-singular i.e. has no cusps or self intersections, partial derivatives do not vanish simultaneously).
+	
+	This is called the short Weierstrass form.
+	$$E(K)=\{(x,y)\in K\times K: y^2=x^3+ax+b\}\cup\{\mathcal{O}\}$$
+
+	$E(K)$ has a nice abelian group structure with $\mathcal{O}$ being the identity (Mordell-Weil Theorem).
+
+\end{frame}
+
+\subsection{Group Operation}
+
+\begin{frame}{Elliptic Curves - Group Operation}
+
+	\begin{minipage}{0.4\textwidth}
+		Let $P$ and $Q$ be points on $E(K)$. The line (degree 1 curve) passing through $P$ and $Q$ intersects $E(K)$ again at one more point due to Bezout Theorem (it can also be $P$ or $Q$ or $\mathcal{O}$). Reflecting this point over the $x$ axis, we get the point that we define to be $P+Q$.
+
+		The line through $P$ and $\mathcal{O}$ means the vertical line through $P$. The line through $P$ and $P$ means the tangent at $P$.
+	\end{minipage}
+	\begin{minipage}{0.59\textwidth}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}[scale=1.1]
+				\draw[->] (-2.3, 0) -- (3.4, 0) node[right] {$x$};
+				\draw[->] (0, -3.0) -- (0, 3.0) node[above] {$y$};
+				\draw[domain=-1.987076:3.1,samples=100,smooth,variable=\x,blue] plot ({\x},{sqrt((\x^3)/3.375 - (\x)/1.5 + 1)});
+				\draw[domain=-1.987076:3.1,samples=100,smooth,variable=\x,blue] plot ({\x},{-sqrt((\x^3)/3.375 - (\x)/1.5 + 1)});
+				\node (P) at (-1.95, 0.321) {};
+				\node (Q) at (0.6, 0.81486) {};
+				\node (NPQ) at (1.47657, 0.98463) {};
+				\node (PQ) at (1.47657, -0.98463) {};
+				\filldraw[black] (P) circle (1pt) node[anchor=east]{$P$};
+				\filldraw[black] (Q) circle (1pt) node[anchor=south]{$Q$};
+				\filldraw[black] (NPQ) circle (1pt) node[anchor=west]{$-(P+Q)$};
+				\filldraw[black] (PQ) circle (1pt) node[anchor=west]{$P+Q$};
+				\draw[dashed] (P) -- (NPQ);
+				\draw[dashed, color=orange] (NPQ) -- (PQ);
+			\end{tikzpicture}
+			\caption{Elliptic curve group operation}
+			\label{fig:ec}
+		\end{figure}
+	\end{minipage}
+
+\end{frame}
+
+\begin{frame}{Elliptic Curves - Associativity}
+
+	\begin{minipage}{0.24\textwidth}
+		\vspace{-1cm}
+		Except associativity, all other properties that we care about are trivial. We can prove associativity by doing all the line curve intersection calculations, or using more sophisticated theorems like Riemann-Roch or Cayley-Bacharach {\color{blue}\cite{ref:silverman}(Silverman)}.
+	\end{minipage}
+	\begin{minipage}{0.75\textwidth}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}[scale=1.2]
+				\draw[->] (-2.3, 0) -- (3.4, 0) node[right] {$x$};
+				\draw[->] (0, -3.0) -- (0, 3.0) node[above] {$y$};
+				\draw[domain=-1.987076:3.1,samples=100,smooth,variable=\x,blue] plot ({\x},{sqrt((\x^3)/3.375 - (\x)/1.5 + 1)});
+				\draw[domain=-1.987076:3.1,samples=100,smooth,variable=\x,blue] plot ({\x},{-sqrt((\x^3)/3.375 - (\x)/1.5 + 1)});
+				\node (P) at (-1.95, 0.321) {};
+				\node (Q) at (0.6, 0.81486) {};
+				\node (R) at (0.16233, -0.945) {};
+				\node (NPR) at (3.0, -2.64575) {};
+				\node (PR) at (3.0, 2.64575) {};
+				\node (NPQ) at (1.47657, 0.98463) {};
+				\node (PQ) at (1.47657, -0.98463) {};
+				\node (NPQR) at (-1.63584, -0.8908) {};
+				\filldraw[black] (P) circle (1pt) node[anchor=east]{$P$};
+				\filldraw[black] (Q) circle (1pt) node[anchor=south]{$Q$};
+				\filldraw[black] (R) circle (1pt) node[anchor=north]{$R$};
+				\filldraw[black] (NPR) circle (1pt) node[anchor=west]{$-(P+R)$};
+				\filldraw[black] (PR) circle (1pt) node[anchor=west]{$P+R$};
+				\filldraw[black] (NPQ) circle (1pt) node[anchor=west]{$-(P+Q)$};
+				\filldraw[black] (PQ) circle (1pt) node[anchor=west]{$P+Q$};
+				\filldraw[black] (NPQR) circle (1pt) node[anchor=east]{$-(P+Q+R)$};
+				\draw[dashed] (P) -- (NPQ);
+				\draw[dashed] (P) -- (NPR);
+				\draw[dashed, color=orange] (NPQ) -- (PQ);
+				\draw[dashed, color=orange] (NPR) -- (PR);
+				\draw[dashed] (NPQR) -- (PQ);
+				\draw[dashed] (NPQR) -- (PR);
+			\end{tikzpicture}
+			\caption{Associativity of the elliptic curve group operation}
+			\label{fig:ec}
+		\end{figure}
+	\end{minipage}
+
+\end{frame}
+
+\begin{frame}{Elliptic Curves - Simple Example}
+
+	\def\nn{11}
+	\def\aa{9}
+	\def\bb{0}
+
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[scale=0.5]
+			\draw[-latex] (-0.5,0) -- (\nn+0.5,0);
+			\foreach \x in {0,...,\nn} {
+				\ifthenelse{\x=\nn}{}{
+					\draw[shift={(\x,0)},color=black] (0pt,3pt) -- (0pt,-3pt);
+					\draw[shift={(\x,0)},color=black] (0pt,0pt) -- (0pt,-3pt) node[below] {\tiny $\x$};
+				}
+				\draw[shift={(\x,0)},dotted,color=darkgray] (0,0) -- (0,\nn);
+			}
+			\draw[-latex] (0,-0.5) -- (0,\nn+0.5);
+			\foreach \y in {0,...,\nn} {
+				\ifthenelse{\y=\nn}{}{
+					\draw[shift={(0,\y)},color=black] (3pt,0pt) -- (-3pt,0pt);
+					\draw[shift={(0,\y)},color=black] (0pt,0pt) -- (-3pt,0pt) node[left] {\tiny $\y$};
+				}
+				\draw[shift={(0,\y)},dotted,color=darkgray] (0,0) -- (\nn,0);
+			}
+
+			\foreach \x in {0,...,\nn} {
+				\foreach \y in {0,...,\nn} {
+					\pgfmathparse{int(mod(\y * \y - \x * \x * \x - \aa * \x - \bb,\nn))}
+					\ifthenelse{\pgfmathresult=0}{
+						\ifthenelse{\x<\nn}{
+							\ifthenelse{\y<\nn}{
+								\fill (\x, \y) circle (4pt);
+							}{}
+						}{}
+					}{}
+				}
+			}
+
+			\draw[blue, line width=1pt] (2, 9) -- (6, 11);
+			\draw[blue, line width=1pt] (6, 0) -- (8, 1);
+			\draw[cyan, line width=0.6pt] (8, 1) -- (8, 10);
+			\fill[red] (2, 9) circle (5pt);
+			\fill[red] (4, 10) circle (5pt);
+			\fill[green] (8, 1) circle (4pt);
+			\fill[red] (8, 10) circle (5pt);
+		\end{tikzpicture}
+		\caption{$y^2=x^3+9x$ over $\mathbb{F}_{11}$, showing $(2, 9)+(4, 10)=(8, 10)$}
+		\label{fig:ec2}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}{Elliptic Curves - Projective Coordinates}
+
+	To properly represent the point at infinity, we sometimes switch to projective coordinates. With the equivalence relation $(x_1,y_1,z_1)\sim(x_2,y_2,z_2)$ iff $\exists\lambda$, $(x_1,y_1,z_1)=(\lambda x_2,\lambda y_2,\lambda z_2)$, we denote the projective points by the equivalence classes $(X:Y:Z)\in (K\times K\times K)/\sim$. We have the trivial inclusion map $(x,y)\hookrightarrow (x:y:1)$ and back mapping 
+	$$(X:Y:Z)=\begin{cases}
+		\left(\frac{X}{Z},\frac{Y}{Z}\right),   & \text{if }Z\neq 0 \\
+		\mathcal{O},                            & (0:1:0)
+	\end{cases}$$
+	
+	Making this substitution to the elliptic curve equation $y^2=x^3+ax+b$, we get
+	$$Y^2Z=X^3+aXZ^2+bZ^3$$
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Torsion Points}
+
+	Let $K=\mathbb{F}_q$ and let $E$ be an elliptic curve defined over $K$.
+
+	We denote the set of $r$-torsion points in $E(K)$ by 
+	$$E(K)[r]=\{P: rP=\mathcal{O}\}$$
+
+	For this definition to be meaningful, we use $r$ such that $r{\big|}\,|E(K)|$.
+
+	We denote all torsion points in $\overline{K}$ by $E[r]=E(\overline{K})[r]$.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Embedding Degree}
+
+	The following are equivalent:
+	\begin{itemize}
+		\item $k$ is the smallest integer such that $r\mid q^k-1$
+		\item $k$ is the smallest integer such that $\mu_r\subset \mathbb{F}_{q^k}^\times$
+		\item $k$ is the smallest integer such that $E[r]\subset E(\mathbb{F}_{q^k})$
+	\end{itemize}
+	This $k$ is called \vocab{embedding degree}.
+
+	From now on, we denote by $E$ the curve defined over that extension field $\mathbb{F}_{q^k}$, which is $E(\mathbb{F}_{q^k})$. So, it contains all $r$-torsion points.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Embedding Degree}
+
+	\begin{minipage}{0.54\textwidth}
+		\textbf{Example:} Consider $y^2=x^3+4$ over $\mathbb{F}_{11}$. $|E(\mathbb{F}_q)|=12$, so take $r=3$. $$E(\mathbb{F}_{q})[r]=\{\mathcal{O},(0,2),(0,9)\}$$
+		Form $\mathbb{F}_{q^2}=\mathbb{F}_q/(i^2+1)$. Then $E(\mathbb{F}_{q^2})[r]$ is
+	\end{minipage}
+	\begin{minipage}{0.45\textwidth}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}
+				\begin{polaraxis}[grid=none, axis lines=none]
+					\addplot[mark=none,domain=0:360,samples=300] {cos(2*x)};
+					\draw (0,0) node[circle,minimum size=0.5cm,fill=white,draw] {$\mathcal{O}$};
+					\draw (40,0) node {\tiny $(0, 2)$};
+					\draw (80,0) node {\tiny $(0, 9)$};
+					\draw (-40,0) node {\tiny $(8, i)$};
+					\draw (-80,0) node {\tiny $(8, 10i)$};
+					\draw (0,40) node {\tiny $(2i+7, i)$};
+					\draw (0,80) node {\tiny $(2i+7, 10i)$};
+					\draw (0,-40) node {\tiny $(9i+7, i)$};
+					\draw (0,-80) node {\tiny $(9i+7, 10i)$};
+				\end{polaraxis}
+			\end{tikzpicture}
+			\caption{$E[r]$}
+			\label{fig:ec3}
+		\end{figure}
+	\end{minipage}
+
+\end{frame}
+
+\subsection{Functions on Elliptic Curves and Divisors}
+
+\begin{frame}{Elliptic Curve Cryptography - Rational Functions on Elliptic Curves}
+
+	Let $K[E]=K[X,Y]/E$ be the polynomials of $X$ and $Y$ such that if they agree on $E$, then they are considered equivalent. And let $K(E)$ be the field of fractions of $K[E]$.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Divisors}
+
+	A \vocab{divisor} $D$ on an elliptic curve $E$ is a formal sum
+	$$D=\sum_{P\in E}n_P(P)$$
+	such that all but finitely many $n_P\in\mathbb{Z}$ are zero.
+
+	The \vocab{support} of $D$ is $$\text{supp}(D)=\{P:n_P\neq 0\}$$
+	The \vocab{degree} of $D$ is $$\deg(D)=\sum_{P\in E}n_P$$
+
+	For example, $2(P)+3(Q)-(R)$ is a divisor with degree 4 and support $\{P,Q,R\}$.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Divisor of a Function}
+
+	The divisor of a rational function $f\in K(E)$ on $E$ is
+	$$(f)=\sum_{P\in E}\ord_P(f)(P)$$
+    where $\ord_P(f)$ is the multiplicity of $f$ at $P$ (positive when $P$ is a zero of $f$ and negative when $P$ is a pole).
+
+	Note that for functions $f$ and $g$, we have
+	$$(fg)=(f)+(g)$$
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Examples}
+
+	The chord line through $P$ and $Q$ has divisor
+	$$(l_{P,Q})=(P)+(Q)+(-(P+Q))-3(\mathcal{O})$$
+
+	The vertical line through $P$ (also passes through $-P$) has divisor
+	$$(v_{P})=(P)+(-P)-2(\mathcal{O})$$
+
+	The reason for $-3(\mathcal{O})$ appearing there is that if we substitute the projective version of a line $y=mx+n$ which is $\frac{Y}{Z}=\frac{mX+nZ}{Z}$ into the projective curve equation, we get 
+	$$-\left(\frac{mX+nZ}{Z}\right)^2+\left(\frac{X}{Z}\right)^3+a\left(\frac{X}{Z}\right)+b$$
+	which has a pole of degree $3$ when $Z=0$.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Principal Divisor}
+
+	If $D$ is a divisor of a function, we call it \vocab{principal}. A divisor is principal if and only if both of the following hold:
+	$$\sum_{P\in E}n_P=\deg(D)=0$$
+	$$\sum_{P\in E}n_PP=\mathcal{O}$$
+	For a detailed proof, you can see {\color{blue}\cite{ref:galbraith}(Galbraith, Thm 7.7.11)}.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Principal Divisor Example}
+
+	\textbf{Example:} Consider $y^2=x^3+20x+20$ over $\mathbb{F}_{103}$. 
+	
+	$P=(26,20)$, $Q=(63,78)$, $R=(59,95)$, $S=(77,84)$ all on $E(\mathbb{F}_{103})$. 
+	
+	The divisor $(P)+(Q)-(R)-(S)$ is principal because $1+1-1-1=0$ and $P+Q-R-S=\mathcal{O}$. 
+	
+	Therefore, there exists a function $f$ on $E$ such that $(f)=(P)+(Q)-(R)-(S)$. 
+	
+	For example, $$f=\frac{6y+71x^2+91x+91}{x^2+70x+11}$$
+	works.
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Evaluating a Function at a Divisor}
+
+	For a function $f$ and a divisor $\displaystyle D=\sum_{P\in E}n_P(P)$ such that $(f)$ and $D$ have disjoint supports, we define the \vocab{evaluation of $f$ at $D$} by:
+	$$f(D)=\prod_{P\in E}f(P)^{n_P}$$
+
+\end{frame}
+
+\begin{frame}{Elliptic Curve Cryptography - Evaluating a Function at a Divisor}
+
+	\textbf{Example:} Consider $y^2=x^3-x-2$ over $\mathbb{F}_{163}$. 
+	
+	Let $P=(43, 154)$, $Q=(46, 38)$ be points on the curve. 
+	
+	The line passing through $P$ and $Q$ is $l:y+93x+85$. 
+	
+	Let $D=2(R)+(S)$ where $R=(12, 35)$ and $S=(5, 66)$. 
+	
+	Then 
+	$$l(D)=l(R)^2l(S)=(y_R+93x_R+85)^2(y_S+93x_S+85)=122$$
+
+\end{frame}
+
+% \begin{frame}{Elliptic Curve Cryptography - Weil Reciprocity}
+
+% 	For functions $f$ and $g$ on $E$ such that $(f)$ and $(g)$ have disjoint supports, we have $$f((g))=g((f))$$
+% 	For a detailed proof, you can see {\color{blue}\cite{ref:galbraith}(Galbraith, Thm 26.1.2)}.
+
+% \end{frame}
+
+\section{Weil Pairing}
+
+\begin{frame}{Weil Pairing - Miller Functions}
+
+	For any $m\in\mathbb{Z}^+$ and $P\in E$, we have a function $f_{m,P}$ such that
+	$$(f_{m,P})=m(P)-(mP)-(m-1)(\mathcal{O})$$
+	
+	For any $P\in E[r]$, we have a function $f_{r,P}$ such that 
+	$$(f_{r,P})=r(P)-(rP)-(r-1)(\mathcal{O})=r(P)-r(\mathcal{O})$$
+
+\end{frame}
+
+\begin{frame}{Weil Pairing - Efficient Construction of Miller Functions}
+
+	We can iteratively construct $f_{m,P}$ for big $m$ in logarithmic time. $f_{1,P}$ is just constant function, and we observe that
+	\begin{align*}
+		(f_{m+n,P})-(f_{m,P})-(f_{n,P}) &= (mP)+(nP)-((m+n)P)-(\mathcal{O}) \\
+		                                &= [(mP)+(nP)+(-(m+n)P)-3(\mathcal{O})] \\
+							            &\phantom{}\qquad -[((m+n)P)+(-(m+n)P)-2\mathcal{O}] \\
+							            &= (l_{mP,nP})-(v_{(m+n)P})
+	\end{align*}
+	So, $$f_{m+n,P}=f_{m,P}\cdot f_{n,P}\cdot\frac{l_{mP,nP}}{v_{(m+n)P}}$$
+
+\end{frame}
+
+\begin{frame}{Weil Pairing - Definition}
+
+	For $P,Q\in E(\mathbb{F}_{q^k})[r]$, \vocab{Weil pairing} is defined as
+	$$e(P,Q)=\frac{f_P(D_Q)}{f_Q(D_P)}$$
+	where $U,V\in E(\mathbb{F}_{q^k})$ such that $\{P+U,U\}\cap\{Q+V,V\}=\varnothing$ and $f_P,f_Q$ are functions on the elliptic curve with divisors $(f_P)=r(P+U)-r(U)$ and $(f_Q)=r(Q+V)-r(V)$, and $D_P=(P+U)-(U)$ and $D_Q=(Q+V)-(V)$.
+	
+	Hence,
+	$$e(P,Q)=\frac{f_P((Q+V)-(V))}{f_Q((P+U)-(U))}=\frac{f_P(Q+V)}{f_P(V)}\cdot\frac{f_Q(U)}{f_Q(P+U)}$$
+
+\end{frame}
+
+\begin{frame}{Weil Pairing - Well-Defined and Bilinearity}
+
+	The reason that $U$ and $V$ are introduced is that $(f)=r(P)-r(\mathcal{O})$ and $D=(Q)-(\mathcal{O})$ do not have disjoint supports. Therefore, alternatives, which can be shown to make no difference {\color{blue}\cite{ref:silverman}(Silverman)}, are used.
+
+	For bilinearity, let $Q_3=Q_1+Q_2$, and then
+	$$e(P,Q_1+Q_2)={\color{blue}\frac{f_P(Q_1+Q_2+V_3)}{f_P(V_3)}}\cdot{\color{red}\frac{f_{Q_3}(U)}{f_{Q_3}(P+U)}}$$
+	and
+	$$e(P,Q_1)\cdot e(P,Q_2)={\color{blue}\frac{f_P(Q_1+V_1)}{f_P(V_1)}}\cdot{\color{red}\frac{f_{Q_1}(U)}{f_{Q_1}(P+U)}}\cdot{\color{blue}\frac{f_P(Q_2+V_2)}{f_P(V_2)}}\cdot{\color{red}\frac{f_{Q_2}(U)}{f_{Q_2}(P+U)}}$$
+
+\end{frame}
+
+\begin{frame}{Weil Pairing - Bilinearity}
+
+	Letting $V_2=Q_1+V_1$ and $V_1=V_3$, we see
+	$${\color{blue}\frac{f_P(Q_1+Q_2+V_1)}{f_P(V_1)}}={\color{blue}\frac{f_P(Q_1+V_1)}{f_P(V_1)}}\cdot{\color{blue}\frac{f_P(Q_2+(Q_1+V_1))}{f_P(Q_1+V_1)}}$$
+	For the other parts, we need to show that ${\color{red}f(P+U)=f(U)}$ where ${\color{red}f=\frac{f_{Q_3}}{f_{Q_1}f_{Q_2}}}$. We get
+	$$(f)=(f_{Q_3})-(f_{Q_1})-(f_{Q_2})=r[(Q_1+Q_2)-(Q_1)-(Q_2)+(\mathcal{O})]$$
+	This implies $f=g^r$ where
+	$$g=\frac{l_{Q_1,Q_2}}{v_{Q_3}}$$
+	and the rest is analyzing these simple line functions.
+
+
+\end{frame}
+
+\begin{frame}{Weil Pairing - Additional Notes}
+
+	Note that the pairing results are in $\mu_r\subset \mathbb{F}_{q^k}^\times$ because
+	$$e(P,Q)^r=e(rP,Q)=e(\mathcal{O},Q)=\frac{f_\mathcal{O}(Q+V)}{f_\mathcal{O}(V)}\cdot\frac{f_Q(U)}{f_Q(\mathcal{O}+U)}=1$$
+	and $(f_\mathcal{O})=r(\mathcal{O}+U)-r(U)=\varnothing$, which means $f_\mathcal{O}$ is constant.
+
+	\vspace{1cm}
+
+	Weil pairing is an example of a pairing used in cryptographic protocols, with a few others such as Tate pairing and Ate pairing, whose definitions are not much different.
+
+\end{frame}
+
+\section{Applications}
+
+\begin{frame}{Applications}
+
+	Remember that the pairing $e$ for cyclic groups $G_1=\langle P\rangle$, $G_2=\langle Q\rangle$ satisfy
+
+	$$e(aP,bQ)=e(P,Q)^{ab}$$
+
+	We will use this a lot in the applications.
+
+\end{frame}
+
+\subsection{BLS Signatures}
+
+\begin{frame}{BLS Signatures - The Problem and the Setting}
+
+	\textbf{The Problem:} {\color{red} A} wants to convince the public that they sign a message $m$. The message can be a document, or a financial transaction such as "{\color{red} A} gives \$100 to {\color{green} B}"
+
+	\vspace{1cm}
+
+	\textbf{The Setting:} Assume we have a pairing $e:G_1\times G_2\rightarrow G_T$ such that all groups are of order $p$, a huge prime number. Also assume we have a function $H:\{\text{message string}\}\rightarrow G_1$, available to everyone. This is just a convenience function for converting a string into a $G_1$ group element.
+	
+\end{frame}
+
+\begin{frame}{BLS Signatures - Key Generation}
+	
+	\textbf{Key Generation:} {\color{red} A} chooses $0\leq x\leq p-1$ and constructs (secret key, public key) pair $(x, xG)$ where $G$ is a generator of $G_2$. {\color{red} A} shares their public key $xG$ publicly. Everyone knows the public key $xG$, but only {\color{red} A} knows $x$. And since Discrete Log Problem is \underline{hard}, nobody can obtain $x$ from $xG$.
+
+	$$\boxed{x\text{ (secret key)}\rightarrow xG\text{ (public key)}}$$
+	
+	Let $m$ be the message that {\color{red} A} wants to sign.
+	
+\end{frame}
+
+\begin{frame}{BLS Signatures - Sign and Verify}
+
+	\textbf{Sign:} {\color{red} A} computes the signature $\sigma=x\,H(m)\in G_1$. Note that the signature can be created only by {\color{red} A}.
+
+	\textbf{Verify:} Given a signature $\sigma$, and a message $m$, \underline{anyone} can verify that the message $m$ is signed by {\color{red} A}. All they have to do is to check the following equality: $$\boxed{e(\sigma,G)\overset{?}{=}e(H(m),xG)}$$
+	
+\end{frame}
+
+\subsection{KZG Polynomial Commitment}
+
+\begin{frame}{KZG Polynomial Commitment - Setting}
+
+	\textbf{The Problem:} {\color{red} A} has a polynomial $P(x)=\sum_{i=0}^n a_ix^i$ and wants to prove that $P(u)=v$ to {\color{green} B} without revealing the polynomial, where $u$ is a value provided by {\color{green} B}.
+
+	\vspace{1cm}
+
+	This protocol is a member of an important family of protocols, namely \textbf{Zero Knowledge Protocols}. In ZK protocols, the prover convinces the other party only that a condition is satisfied, and nothing more.
+	
+\end{frame}
+
+\begin{frame}{KZG Polynomial Commitment - Setup}
+
+	\textbf{Setup:} Degree of the polynomial, $n$, is known to both {\color{red} A} and {\color{green} B}. We have a pairing $e:G_1\times G_2\rightarrow G_T$. 
+	
+	$$\boxed{\tau\rightarrow (G, \tau G,\tau^2 G,\cdots,\tau^n G)\text{ and }(H, \tau H)}$$
+
+	A scalar $0\leq \tau\leq |G_1|-1$ is generated randomly, $(G, \tau G,\tau^2 G,\cdots,\tau^n G)$ and $(H, \tau H)$ are computed, and then $\tau$ is forgotten. ($\tau$ is created either jointly by {\color{red} A} and {\color{green} B} in such a way that they can not recover it by themselves, or it is created by a trusted third party {\color{blue} C})
+	
+\end{frame}
+
+\begin{frame}{KZG Polynomial Commitment - Committing to the Polynomial}
+
+	\textbf{Commit:} {\color{red} A} calculates the commitment $$\textbf{Commitment}=P(\tau)G=\sum_{i=0}^n a_i(\tau^iG)$$ and shares it with {\color{green} B}. This plays the role of a locked box, {\color{red} A} commits to the polynomial and can not change it later.
+	
+\end{frame}
+
+\begin{frame}{KZG Polynomial Commitment - Proving}
+
+	\textbf{Prove:} After receiving $u$ from {\color{green} B}, {\color{red} A} calculates $v=P(u)$. If {\color{red} A} is honest and following the protocol, there exists a polynomial $Q(x)=\sum_{i=1}^n b_ix^i$ such that $P(x)=Q(x)(x-u)+v$. The proof is then $$\textbf{Proof}=Q(\tau)G=\sum_{i=0}^n b_i(\tau^iG)$$
+	
+\end{frame}
+
+\begin{frame}{KZG Polynomial Commitment - Verifying}
+
+	\textbf{Verify:} After receiving the result $v$, and the proof $Q(\tau)G$ (and also the commitment $P(\tau)G$), {\color{green} B} performs the following pairing calculation to verify the proof:
+	$$\boxed{e(P(\tau)G,H)\overset{?}{=}e(Q(\tau)G,\tau H-uH)\cdot e(G,H)^{v}}$$
+
+	This process ensures that
+	$$P(\tau)=Q(\tau)(\tau-u)+v$$
+	Here, $\tau$ plays the role of a random value that neither {\color{red} A} nor {\color{green} B} has control of, but they can perform operations involving it. We rely on the fact that if an equation holds for a random value, then it probabilistically holds in general. So, {\color{green} B} is convinced that
+	$$P(x)=Q(x)(x-u)+v$$
+	which is equivalent to $P(u)=v$.
+	
+\end{frame}
+
+\begin{frame}[plain]
+
+	\begin{center}
+		\LARGE{Thank you}
+	\end{center}
+
+\end{frame}
+
+\appendix
+
+\begin{frame}[allowframebreaks]{References}
+	\begin{thebibliography}{9}
+        \bibitem{ref:silverman} J. H. Silverman. The Arithmetic of Elliptic Curves (2nd Edition). Number 106 in Graduate Texts in Mathematics. Springer-Verlag, 2009.
+		\bibitem{ref:galbraith} S. D. Galbraith. Mathematics of Public Key Cryptography. Cambridge University Press, March 2012
+    \end{thebibliography}
+\end{frame}
+
+\end{document}
